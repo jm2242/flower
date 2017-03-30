@@ -8,11 +8,41 @@ from distutils.util import strtobool
 from base64 import b64decode
 
 import tornado
+from tornado_cors import CorsMixin
+
 
 from ..utils import template, bugreport, prepend_url
 
 
-class BaseHandler(tornado.web.RequestHandler):
+class BaseHandler(CorsMixin, tornado.web.RequestHandler):
+
+    # Value for the Access-Control-Allow-Origin header.
+    # Default: None (no header).
+    CORS_ORIGIN = 'http://localhost:4000'
+
+    # Value for the Access-Control-Allow-Headers header.
+    # Default: None (no header).
+    CORS_HEADERS = 'Content-Type'
+
+    # Value for the Access-Control-Allow-Methods header.
+    # Default: Methods defined in handler class.
+    # None means no header.
+    CORS_METHODS = 'POST'
+
+    # Value for the Access-Control-Allow-Credentials header.
+    # Default: None (no header).
+    # None means no header.
+    CORS_CREDENTIALS = True
+
+    # Value for the Access-Control-Max-Age header.
+    # Default: 86400.
+    # None means no header.
+    CORS_MAX_AGE = 21600
+
+    # Value for the Access-Control-Expose-Headers header.
+    # Default: None
+    CORS_EXPOSE_HEADERS = 'Location, X-WP-TotalPages'
+
     def render(self, *args, **kwargs):
         functions = inspect.getmembers(template, inspect.isfunction)
         assert not set(map(lambda x: x[0], functions)) & set(kwargs.keys())
